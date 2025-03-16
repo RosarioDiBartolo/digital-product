@@ -22,12 +22,13 @@ const createDigitalProductMediasStep = createStep(
   async ({ 
     medias
   }: CreateDigitalProductMediasStepInput, { container }) => {
-    const digitalProductModuleService: DigitalProductModuleService = 
+
+     const digitalProductModuleService: DigitalProductModuleService = 
       container.resolve(DIGITAL_PRODUCT_MODULE)
 
     const digitalProductMedias = await digitalProductModuleService
       .createDigitalProductMedias(medias)
-
+ 
     return new StepResponse({
       digital_product_medias: digitalProductMedias
     }, {

@@ -10,7 +10,7 @@ export type DigitalProductMedia = {
   type: MediaType
   fileId: string
   mimeType: string
-  digitalProducts?: DigitalProduct
+  dpid : string
 }
 
 export type DigitalProduct = {

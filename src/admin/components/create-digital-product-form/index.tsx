@@ -109,7 +109,8 @@ const CreateDigitalProductForm = ({
           mime_type: media.file!.type,
         })
       })
-  
+   
+
       fetch(`/admin/digital-products`, {
         method: "POST",
         credentials: "include",

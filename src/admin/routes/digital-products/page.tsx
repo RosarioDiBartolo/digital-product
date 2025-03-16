@@ -97,7 +97,9 @@ const DigitalProductsPage = () => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Action</Table.HeaderCell>
+            <Table.HeaderCell>Overview</Table.HeaderCell>
+
+            <Table.HeaderCell>Related product</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -107,8 +109,13 @@ const DigitalProductsPage = () => {
                 {digitalProduct.name}
               </Table.Cell>
               <Table.Cell>
+                <Link to={`/digital-products/${digitalProduct.id}`}>
+                  Product Overview
+                </Link>
+              </Table.Cell>
+              <Table.Cell>
                 <Link to={`/products/${digitalProduct.product_variant?.product_id}`}>
-                  View Product
+                  Related Product
                 </Link>
               </Table.Cell>
             </Table.Row>

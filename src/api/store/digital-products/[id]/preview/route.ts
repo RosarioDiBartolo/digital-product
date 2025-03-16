@@ -29,8 +29,13 @@ export const GET = async (
     type: MediaType.PREVIEW
   })
 
+
+  const uniqueMedias = medias.filter((obj, index, self) =>
+    index === self.findIndex((o) => o.id === obj.id)
+  );
+
   const normalizedMedias = await Promise.all(
-    medias.map(async (media) => {
+    uniqueMedias.map(async (media) => {
       const { fileId, ...mediaData } = media
       const fileData = await fileModuleService.retrieveFile(fileId)
 

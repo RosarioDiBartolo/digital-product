@@ -1,6 +1,7 @@
 import { model } from "@medusajs/framework/utils"
 import DigitalProductMedia from "./digital-product-media"
 import DigitalProductOrder from "./digital-product-order"
+import { InferTypeOf } from "@medusajs/framework/types"
 
 const DigitalProduct = model.define("digital_product", {
   id: model.id().primaryKey(),
@@ -16,4 +17,6 @@ const DigitalProduct = model.define("digital_product", {
   delete: ["medias"]
 })
 
+
+export type DigitalProductType = InferTypeOf< typeof DigitalProduct >
 export default DigitalProduct

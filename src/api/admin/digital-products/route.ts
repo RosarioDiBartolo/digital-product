@@ -57,7 +57,8 @@ export const POST = async (
     entity: "shipping_profile",
     fields: ["id"],
   })
-  const { result } = await createDigitalProductWorkflow(
+
+   const { result } = await createDigitalProductWorkflow(
     req.scope
   ).run({
     input: {

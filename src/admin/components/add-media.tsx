@@ -1,8 +1,16 @@
 import { useRef, useState } from "react";
-import { useMedias } from "../../lib/digital-products";
+import {
+  SupportedMedias,
+  ThreeDimExtensions,
+  ThreeDimMimeTypes,
+  AddProductMedias,
+  useAddMedias
+ } from "./lib/digital-products";
 import { MediaType } from "../types";
-import { Button, Select } from "@medusajs/ui";
-import { useNavigate } from "react-router";
+import { Button, Select } from "@medusajs/ui"; 
+
+ 
+ 
 
 function AddMedia({ dpid }: { dpid: string }) {
   const [selectedType, setSelectedType] = useState<MediaType>(
@@ -12,23 +20,32 @@ function AddMedia({ dpid }: { dpid: string }) {
   const [MediaFile, setMediaFile] = useState<File>();
   const inpRef = useRef<HTMLInputElement>(null);
 
-  
-  const {AddMediasToProduct} = useMedias(dpid)
-  return (
-    <form  
-    className="  space-y-3"
-    onSubmit={e=>{
-        e.preventDefault()
-        if (MediaFile && selectedType){
-          AddMediasToProduct(
-             [MediaFile], selectedType
-        )}
+    const {mutateAsync: AddMediasToProduct, isPending} = useAddMedias(
+      dpid
+    )
  
+  // Helper function to check if file is a 3D model
+  const isThreeDimFile = (file: File) => {
+    return (
+      ThreeDimMimeTypes.includes(file.type) || // Check MIME type
+      ThreeDimExtensions.some((ext) => file.name.toLowerCase().endsWith(ext)) // Check file extension
+    );
+  };
 
-    }}
+  return (
+    <form
+      className="space-y-3 w-fit inline-block"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (MediaFile && selectedType) {
+           AddMediasToProduct({Files:[MediaFile], type:selectedType});
+           setMediaFile( undefined )
+        }
+      }}
     >
-       <input
+      <input
         name="files"
+        accept={SupportedMedias}
         ref={inpRef}
         onChange={async (e) => {
           const file = e.target?.files?.item(0);
@@ -39,11 +56,27 @@ function AddMedia({ dpid }: { dpid: string }) {
         type="file"
         className="hidden"
       />
-      <Button className="h-40 p-0 w-full" type="button" onClick={() => inpRef.current?.click()}>
-        {MediaFile ? <img      
-        
-        className=" object-cover w-full"
- src={URL.createObjectURL(MediaFile)} /> : "Select file"}
+      <Button
+        className="h-40 w-40 p-0 block"
+        type="button"
+        onClick={() => inpRef.current?.click()}
+      >
+        {MediaFile ? (
+          isThreeDimFile(MediaFile) ? (
+            <> 
+          <p className=" p-2"> Preview disabled for 3D type of medias</p>  
+          <span className=" bold">({MediaFile.name})</span>
+          </>
+           ) : (
+            <img
+              className="object-cover w-full"
+              src={URL.createObjectURL(MediaFile)}
+              alt="Selected media"
+            />
+          )
+        ) : (
+          "Select file"
+        )}
       </Button>
 
       <Select
@@ -61,9 +94,11 @@ function AddMedia({ dpid }: { dpid: string }) {
           <Select.Item value="preview">Preview</Select.Item>
         </Select.Content>
       </Select>
-      <Button type="submit" className="  w-full">Add media</Button>
+      <Button disabled = {isPending} type="submit" className="w-full">
+        Add media
+      </Button>
     </form>
-   );
+  );
 }
 
 export default AddMedia;

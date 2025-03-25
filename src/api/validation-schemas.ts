@@ -14,6 +14,10 @@ export const createDigitalProductsSchema = z.object({
   product: AdminCreateProduct()
 })
 
+export const createDigitalProductsFromVariantSchema = z.object({
+  name: z.string() 
+ })
+
 
 export const deleteMediasSchema = z.object({
   mids: z.array(z.string())

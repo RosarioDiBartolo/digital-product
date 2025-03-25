@@ -4,34 +4,40 @@ import {
 } from "../../types";
 import { PropsWithChildren, useRef, useState } from "react";
 import { Select } from "@medusajs/ui";
-import { useMedias } from "../../../lib/digital-products";
-
+import {  ThreeDimMimeTypes, useAddMedias, useDeleteMedias  } from "../lib/digital-products";
+import ThreeDimView from "./3d-product-media";
 function DigitalProductMedia({
-  dpid,
-  fileId,
-  id,
-  type,
+   fileId,
+   type,
   children,
+  dpid,
+  id,
+  mimeType
 }: PropsWithChildren<DigitalProductMediaType>) {
   const inpRef = useRef<HTMLInputElement>(null);
   const [selectedType, setSelectedType] = useState(type);
 
-  const { DeleteProductMedias, AddMediasToProduct } = useMedias(dpid);
+  const {mutate: DeleteProductMedias} = useDeleteMedias(
+    dpid
+  )
 
+  const { mutate: AddMediasToProduct} = useAddMedias(
+    dpid
+  )
   const Update = async () => {
     const files = inpRef.current?.files;
 
     const file = files?.item(0);
 
-    if (file && selectedType) {
-      await DeleteProductMedias([id], false);
+ if (file && selectedType) {
+       await DeleteProductMedias({mids: [id]}  );
 
-      await AddMediasToProduct([file], selectedType);
-    }
+       await AddMediasToProduct(   { Files: [file], type: selectedType});
+     }
   };
 
   return (
-    <div className="space-y-3" >
+    <div className="space-y-3 inline-block" >
       <input
         ref={inpRef}
         onChange={() => {
@@ -45,7 +51,10 @@ function DigitalProductMedia({
       
         <div className="relative group">
           {children}
-          <img
+
+          
+
+        { ThreeDimMimeTypes.includes(mimeType)?<ThreeDimView mediaSrc={`/static/${fileId}`} /> : <img
             onClick={() => {
               inpRef.current?.click();
             }}
@@ -53,7 +62,7 @@ function DigitalProductMedia({
             key={fileId}
             height={200}
             src={`/static/${fileId}`}
-          />
+          />}
         </div>
        <Select
         value={selectedType}
